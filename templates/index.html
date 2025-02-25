@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Chat</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex justify-center items-center h-screen">
+
+    <div class="w-full max-w-lg bg-white flex flex-col h-[90vh] rounded shadow-lg overflow-hidden">
+        <!-- Header -->
+        <div class="bg-blue-600 text-white text-center p-4 font-bold">
+            AI Chat
+        </div>
+
+        <!-- Mode Switch -->
+        <div class="flex justify-center p-2 bg-gray-100">
+            <button onclick="setMode('train')" class="mx-2 px-4 py-1 bg-blue-500 text-white rounded text-sm">Train</button>
+            <button onclick="setMode('use')" class="mx-2 px-4 py-1 bg-green-500 text-white rounded text-sm">Use</button>
+        </div>
+
+        <!-- Chat Box -->
+        <div id="chat-box" class="flex-1 overflow-y-auto p-4 space-y-2 bg-gray-200"></div>
+
+        <!-- Input Train -->
+        <div id="train-inputs" class="p-3 bg-white border-t hidden">
+            <textarea id="train-question" class="w-full p-2 border rounded mb-2" placeholder="Masukkan pertanyaan..."></textarea>
+            <textarea id="train-answer" class="w-full p-2 border rounded mb-2" placeholder="Masukkan jawaban AI..."></textarea>
+            <button onclick="trainAI()" class="w-full bg-blue-500 text-white px-4 py-2 rounded">Simpan ke AI</button>
+        </div>
+
+        <!-- Input Chat -->
+        <div id="use-inputs" class="p-3 bg-white border-t flex items-center hidden">
+            <textarea id="use-question" class="flex-1 p-2 border rounded resize-none" placeholder="Tanyakan sesuatu..." rows="1"></textarea>
+            <button onclick="useAI()" class="ml-2 bg-green-500 text-white px-4 py-2 rounded">Kirim</button>
+        </div>
+    </div>
+
+    <script>
+        let mode = "use";
+
+        function setMode(newMode) {
+            mode = newMode;
+            document.getElementById("train-inputs").classList.toggle("hidden", mode !== "train");
+            document.getElementById("use-inputs").classList.toggle("hidden", mode !== "use");
+            document.getElementById("chat-box").innerHTML = ""; // Reset chat
+        }
+
+        function trainAI() {
+            let input = document.getElementById("train-question").value;
+            let output = document.getElementById("train-answer").value;
+            fetch("/train", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ input: input, output: output })
+            }).then(res => res.json()).then(data => {
+                alert(data.message);
+                document.getElementById("train-question").value = "";
+                document.getElementById("train-answer").value = "";
+            });
+        }
+
+        function useAI() {
+            let input = document.getElementById("use-question").value;
+            let chatBox = document.getElementById("chat-box");
+
+            if (input.trim() === "") return;
+
+            // Tambah chat user
+            let userChat = `<div class="flex justify-end"><div class="bg-blue-500 text-white p-2 rounded-lg max-w-xs">${input}</div></div>`;
+            chatBox.innerHTML += userChat;
+
+            fetch("/use", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ input: input })
+            }).then(res => res.json()).then(data => {
+                let botChat = `<div class="flex justify-start"><div class="bg-gray-300 p-2 rounded-lg max-w-xs">${data.output}</div></div>`;
+                chatBox.innerHTML += botChat;
+                chatBox.scrollTop = chatBox.scrollHeight;
+            });
+
+            document.getElementById("use-question").value = "";
+        }
+    </script>
+
+</body>
+</html>

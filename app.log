@@ -1,0 +1,32 @@
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with stat
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 196-094-049
+INFO:werkzeug:127.0.0.1 - - [25/Feb/2025 12:00:42] "GET / HTTP/1.1" 200 -
+ERROR:root:Model belum dilatih!
+INFO:werkzeug:127.0.0.1 - - [25/Feb/2025 12:00:51] "POST /use HTTP/1.1" 200 -
+INFO:flask_caching:Cache used for key: view//use
+INFO:werkzeug:127.0.0.1 - - [25/Feb/2025 12:01:02] "POST /use HTTP/1.1" 200 -
+INFO:flask_caching:Cache used for key: view//use
+INFO:werkzeug:127.0.0.1 - - [25/Feb/2025 12:01:11] "POST /use HTTP/1.1" 200 -
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with stat
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 196-094-049
+INFO:werkzeug:127.0.0.1 - - [25/Feb/2025 12:02:02] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [25/Feb/2025 12:02:02] "GET / HTTP/1.1" 200 -
+INFO:root:User input: halo
+INFO:root:Model response: Maaf, saya tidak yakin dengan jawaban itu.
+INFO:werkzeug:127.0.0.1 - - [25/Feb/2025 12:02:12] "POST /use HTTP/1.1" 200 -
+INFO:flask_caching:Cache used for key: view//use
+INFO:werkzeug:127.0.0.1 - - [25/Feb/2025 12:02:17] "POST /use HTTP/1.1" 200 -
+INFO:flask_caching:Cache used for key: view//use
+INFO:werkzeug:127.0.0.1 - - [25/Feb/2025 12:02:20] "POST /use HTTP/1.1" 200 -
+INFO:flask_caching:Cache used for key: view//use
+INFO:werkzeug:127.0.0.1 - - [25/Feb/2025 12:02:24] "POST /use HTTP/1.1" 200 -
+INFO:werkzeug: * Detected change in 'd:\\Project\\AI v2\\app.py', reloading
+INFO:werkzeug: * Restarting with stat

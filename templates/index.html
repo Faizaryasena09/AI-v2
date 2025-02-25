@@ -8,32 +8,40 @@
 </head>
 <body class="bg-gray-100 flex justify-center items-center h-screen">
 
-    <div class="w-full max-w-lg bg-white flex flex-col h-[90vh] rounded shadow-lg overflow-hidden">
+    <div class="w-full max-w-2xl bg-white flex flex-col h-[90vh] rounded-lg shadow-lg overflow-hidden">
         <!-- Header -->
-        <div class="bg-blue-600 text-white text-center p-4 font-bold">
+        <div class="bg-blue-600 text-white text-center p-4 font-bold text-lg">
             AI Chat
         </div>
 
         <!-- Mode Switch -->
-        <div class="flex justify-center p-2 bg-gray-100">
-            <button onclick="setMode('train')" class="mx-2 px-4 py-1 bg-blue-500 text-white rounded text-sm">Train</button>
-            <button onclick="setMode('use')" class="mx-2 px-4 py-1 bg-green-500 text-white rounded text-sm">Use</button>
+        <div class="flex justify-center p-3 bg-gray-100 border-b">
+            <button onclick="setMode('train')" class="mx-2 px-4 py-2 bg-blue-500 text-white rounded-md text-sm hover:bg-blue-600 transition">
+                Train
+            </button>
+            <button onclick="setMode('use')" class="mx-2 px-4 py-2 bg-green-500 text-white rounded-md text-sm hover:bg-green-600 transition">
+                Use
+            </button>
         </div>
 
         <!-- Chat Box -->
-        <div id="chat-box" class="flex-1 overflow-y-auto p-4 space-y-2 bg-gray-200"></div>
+        <div id="chat-box" class="flex-1 overflow-y-auto p-4 space-y-3 bg-gray-200"></div>
 
         <!-- Input Train -->
         <div id="train-inputs" class="p-3 bg-white border-t hidden">
-            <textarea id="train-question" class="w-full p-2 border rounded mb-2" placeholder="Masukkan pertanyaan..."></textarea>
-            <textarea id="train-answer" class="w-full p-2 border rounded mb-2" placeholder="Masukkan jawaban AI..."></textarea>
-            <button onclick="trainAI()" class="w-full bg-blue-500 text-white px-4 py-2 rounded">Simpan ke AI</button>
+            <textarea id="train-question" class="w-full p-2 border rounded-md mb-2 resize-none" placeholder="Masukkan pertanyaan..." rows="2"></textarea>
+            <textarea id="train-answer" class="w-full p-2 border rounded-md mb-2 resize-none" placeholder="Masukkan jawaban AI..." rows="2"></textarea>
+            <button onclick="trainAI()" class="w-full bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition">
+                Simpan ke AI
+            </button>
         </div>
 
         <!-- Input Chat -->
         <div id="use-inputs" class="p-3 bg-white border-t flex items-center hidden">
-            <textarea id="use-question" class="flex-1 p-2 border rounded resize-none" placeholder="Tanyakan sesuatu..." rows="1"></textarea>
-            <button onclick="useAI()" class="ml-2 bg-green-500 text-white px-4 py-2 rounded">Kirim</button>
+            <textarea id="use-question" class="flex-1 p-2 border rounded-md resize-none focus:outline-none" placeholder="Tanyakan sesuatu..." rows="1"></textarea>
+            <button onclick="useAI()" class="ml-2 bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition">
+                Kirim
+            </button>
         </div>
     </div>
 
@@ -48,12 +56,14 @@
         }
 
         function trainAI() {
-            let input = document.getElementById("train-question").value;
-            let output = document.getElementById("train-answer").value;
+            let input = document.getElementById("train-question").value.trim();
+            let output = document.getElementById("train-answer").value.trim();
+            if (!input || !output) return alert("Mohon isi pertanyaan dan jawaban!");
+
             fetch("/train", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ input: input, output: output })
+                body: JSON.stringify({ input, output })
             }).then(res => res.json()).then(data => {
                 alert(data.message);
                 document.getElementById("train-question").value = "";
@@ -62,28 +72,83 @@
         }
 
         function useAI() {
-            let input = document.getElementById("use-question").value;
+            let inputField = document.getElementById("use-question");
+            let input = inputField.value.trim();
             let chatBox = document.getElementById("chat-box");
 
-            if (input.trim() === "") return;
+            if (input === "") return;
 
-            // Tambah chat user
-            let userChat = `<div class="flex justify-end"><div class="bg-blue-500 text-white p-2 rounded-lg max-w-xs">${input}</div></div>`;
-            chatBox.innerHTML += userChat;
+            // Tambah chat user tanpa animasi
+            chatBox.innerHTML += `
+                <div class="flex justify-end">
+                    <div class="bg-blue-500 text-white p-3 rounded-lg max-w-lg">${input}</div>
+                </div>
+            `;
+
+            inputField.value = "";
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            // Tampilkan animasi mengetik AI
+            let typingIndicator = document.createElement("div");
+            typingIndicator.id = "typing-indicator";
+            typingIndicator.className = "flex justify-start";
+            typingIndicator.innerHTML = `<div class="bg-gray-300 p-3 rounded-lg max-w-lg flex items-center">
+                <span class="dot"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+            </div>`;
+            chatBox.appendChild(typingIndicator);
+            chatBox.scrollTop = chatBox.scrollHeight;
 
             fetch("/use", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ input: input })
+                body: JSON.stringify({ input })
             }).then(res => res.json()).then(data => {
-                let botChat = `<div class="flex justify-start"><div class="bg-gray-300 p-2 rounded-lg max-w-xs">${data.output}</div></div>`;
-                chatBox.innerHTML += botChat;
+                // Hapus animasi mengetik
+                chatBox.removeChild(typingIndicator);
+
+                // Tampilkan jawaban AI langsung tanpa animasi
+                chatBox.innerHTML += `
+                    <div class="flex justify-start">
+                        <div class="bg-gray-300 p-3 rounded-lg max-w-lg">${data.output}</div>
+                    </div>
+                `;
                 chatBox.scrollTop = chatBox.scrollHeight;
             });
-
-            document.getElementById("use-question").value = "";
         }
+
+        // Kirim pesan dengan Enter
+        document.getElementById("use-question").addEventListener("keypress", function(event) {
+            if (event.key === "Enter" && !event.shiftKey) {
+                event.preventDefault();
+                useAI();
+            }
+        });
     </script>
+
+    <style>
+        /* Dot typing animation */
+        .dot {
+            width: 8px;
+            height: 8px;
+            margin: 0 2px;
+            background-color: #555;
+            border-radius: 50%;
+            display: inline-block;
+            animation: typing 1.5s infinite;
+        }
+
+        .dot:nth-child(1) { animation-delay: 0s; }
+        .dot:nth-child(2) { animation-delay: 0.2s; }
+        .dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes typing {
+            0% { opacity: 0.3; transform: translateY(0px); }
+            50% { opacity: 1; transform: translateY(-3px); }
+            100% { opacity: 0.3; transform: translateY(0px); }
+        }
+    </style>
 
 </body>
 </html>

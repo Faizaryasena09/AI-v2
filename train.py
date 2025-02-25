@@ -57,7 +57,7 @@ model = tf.keras.Sequential([
     tf.keras.layers.Dense(len(label_encoder.classes_), activation="softmax")
 ])
 
-model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=0.001), loss="categorical_crossentropy", metrics=["accuracy"])
+model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=0.0001), loss="categorical_crossentropy", metrics=["accuracy"])
 
 callbacks = [
     EarlyStopping(monitor="val_loss", patience=5, restore_best_weights=True),
@@ -65,7 +65,7 @@ callbacks = [
 ]
 
 # Training
-model.fit(train_x_pad, train_y_pad, epochs=30, batch_size=16, validation_split=0.1, verbose=2, callbacks=callbacks)
+model.fit(train_x_pad, train_y_pad, epochs=10, batch_size=16, validation_split=0.1, verbose=2, callbacks=callbacks)
 
 # Save Model
 model.save(MODEL_PATH)

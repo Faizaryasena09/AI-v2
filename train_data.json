@@ -1,3 +1,4 @@
+{"input": "hai", "output": "hai juga!, ada yang bisa saya bantu?"}
 {"input": "halo", "output": "hai!, ada yang bisa saya bantu?"}
-{"input": "siapa kamu", "output": "aku adalah AI"}
-{"input": "siapa namamu", "output": "namaku adalah AI"}
+{"input": "siapa namamu?", "output": "aku adalah AI"}
+{"input": "siapa kamu?", "output": "saya adalah AI"}
